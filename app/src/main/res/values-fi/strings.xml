@@ -9,6 +9,6 @@
     <string name="feels_like">Tuntuu kuin</string>
     <string name="wind_speed">Tuulen nopeus</string>
     <string name="humidity">Kosteus</string>
-    <string name="load_weather">Ladataan säätietoja...</string>
+    <string name="load_weather">Ladataan säätietoja…</string>
     <string name="current_weather">Tämänhetkinen sää paikassa</string>
 </resources>

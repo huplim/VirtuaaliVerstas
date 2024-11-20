@@ -8,6 +8,6 @@
     <string name="feels_like">Feels like</string>
     <string name="wind_speed">Wind speed</string>
     <string name="humidity">Humidity</string>
-    <string name="load_weather">Loading weather data...</string>
+    <string name="load_weather">Loading weather data…</string>
     <string name="current_weather">Current weather in</string>
 </resources>
