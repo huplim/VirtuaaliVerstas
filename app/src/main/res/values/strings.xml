@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">VirtuaaliVerstas</string>
+    <string name="app_name">VirtualWorkshop</string>
+    <string name="welcome_text">Welcome to VirtualWorkshop!</string>
+    <string name="home">Home</string>
+    <string name="weather">Weather</string>
+    <string name="description">Description</string>
+    <string name="temperature">Temperature</string>
+    <string name="feels_like">Feels like</string>
+    <string name="wind_speed">Wind speed</string>
+    <string name="humidity">Humidity</string>
+    <string name="load_weather">Loading weather data...</string>
+    <string name="current_weather">Current weather in</string>
 </resources>
