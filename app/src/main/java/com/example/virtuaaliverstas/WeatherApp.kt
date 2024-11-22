@@ -1,5 +1,6 @@
 package com.example.virtuaaliverstas
 
+import android.app.Application
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,19 +9,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
@@ -28,25 +28,16 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 
 @Composable
-fun WeatherAppHomeScreen(navController: NavHostController) {
-    var weatherData by remember { mutableStateOf<WeatherData?>(null) }
-    val coroutineScope = rememberCoroutineScope()
+fun WeatherAppHomeScreen(navController: NavHostController,
+                         weatherViewModel: WeatherViewModel = viewModel()) {
+    val weatherData = weatherViewModel.currentWeatherData.collectAsState()
 
-    LaunchedEffect(Unit) {
-        coroutineScope.launch(Dispatchers.IO) {
-            try {
-                val data = RetrofitInstance.weatherApiService.getWeatherData()
-                withContext(Dispatchers.Main) {
-                    weatherData = data
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                withContext(Dispatchers.Main) {
-                    weatherData = null
-                }
-            }
-        }
-    }
+    val place = weatherData.value?.name ?: "-"
+    val description = weatherData.value?.weather?.getOrNull(0)?.main ?: "-"
+    val temperature = weatherData.value?.main?.temp ?: "-"
+    val feelsLike = weatherData.value?.main?.feelsLike ?: "-"
+    val windSpeed = weatherData.value?.wind?.speed ?: "-"
+    val humidity = weatherData.value?.main?.humidity ?: "-"
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -58,38 +49,55 @@ fun WeatherAppHomeScreen(navController: NavHostController) {
             style = MaterialTheme.typography.titleLarge,
         )
         Text(
-            text = weatherData?.name ?: "-",
+            text = place,
             style = MaterialTheme.typography.titleLarge,
         )
         Spacer(modifier = Modifier.height(16.dp))
-        if (weatherData != null) {
-            Text(
-                text = "${stringResource(id = R.string.description)}:" +
-                        " ${weatherData?.weather?.getOrNull(0)?.main ?: "-"}",
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = "${stringResource(id = R.string.temperature)}:" +
-                        " ${weatherData?.main?.temp ?: "-"}°C",
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = "${stringResource(id = R.string.feels_like)}:" +
-                        " ${weatherData?.main?.feelsLike ?: "-"}°C",
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = "${stringResource(id = R.string.wind_speed)}:" +
-                        " ${weatherData?.wind?.speed ?: "-"} m/s",
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = "${stringResource(id = R.string.humidity)}:" +
-                        " ${weatherData?.main?.humidity ?: "-"}%",
-                style = MaterialTheme.typography.titleMedium
-            )
-        } else {
-            Text(text = stringResource(id = R.string.load_weather))
+
+        Text(
+            text = "${stringResource(id = R.string.description)}: $description",
+            style = MaterialTheme.typography.titleMedium
+        )
+        Text(
+            text = "${stringResource(id = R.string.temperature)}: $temperature°C",
+            style = MaterialTheme.typography.titleMedium
+        )
+        Text(
+            text = "${stringResource(id = R.string.feels_like)}: $feelsLike°C",
+            style = MaterialTheme.typography.titleMedium
+        )
+        Text(
+            text = "${stringResource(id = R.string.wind_speed)}: $windSpeed m/s",
+            style = MaterialTheme.typography.titleMedium
+        )
+        Text(
+            text = "${stringResource(id = R.string.humidity)}: $humidity%",
+            style = MaterialTheme.typography.titleMedium
+        )
+    }
+}
+
+class WeatherViewModel(application : Application) : AndroidViewModel(application) {
+    private val weatherData : WeatherData? = null
+    var currentWeatherData = MutableStateFlow(weatherData)
+
+    init {
+        fetchWeatherData()
+    }
+
+    private fun fetchWeatherData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val data = RetrofitInstance.weatherApiService.getWeatherData()
+                withContext(Dispatchers.Main) {
+                    currentWeatherData.value = data
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    currentWeatherData.value = null
+                }
+            }
         }
     }
 }
