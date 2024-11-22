@@ -31,3 +31,7 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Other local files
+.kotlin/sessions/
+.idea/misc.xml
