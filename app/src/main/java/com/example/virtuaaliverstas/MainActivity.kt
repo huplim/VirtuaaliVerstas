@@ -1,5 +1,6 @@
 package com.example.virtuaaliverstas
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,6 +24,18 @@ import com.example.virtuaaliverstas.ui.theme.VirtuaaliVerstasTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Check for location permissions, ask for them if not granted already
+        if( checkSelfPermission( android.Manifest.permission.ACCESS_FINE_LOCATION )
+            != PackageManager.PERMISSION_GRANTED
+            && checkSelfPermission( android.Manifest.permission.ACCESS_COARSE_LOCATION )
+            != PackageManager.PERMISSION_GRANTED ) {
+            requestPermissions( arrayOf(
+                android.Manifest.permission.ACCESS_FINE_LOCATION ), 0 )
+            requestPermissions( arrayOf(
+                android.Manifest.permission.ACCESS_COARSE_LOCATION ), 0 )
+        }
+
         enableEdgeToEdge()
         setContent {
             VirtuaaliVerstasTheme {

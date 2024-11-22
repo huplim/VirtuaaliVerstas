@@ -29,7 +29,9 @@ import retrofit2.http.GET
 
 @Composable
 fun WeatherAppHomeScreen(navController: NavHostController,
-                         weatherViewModel: WeatherViewModel = viewModel()) {
+                         weatherViewModel: WeatherViewModel = viewModel(),
+                         locationViewModel: LocationViewModel = viewModel()
+) {
     val weatherData = weatherViewModel.currentWeatherData.collectAsState()
 
     val place = weatherData.value?.name ?: "-"
@@ -38,6 +40,11 @@ fun WeatherAppHomeScreen(navController: NavHostController,
     val feelsLike = weatherData.value?.main?.feelsLike ?: "-"
     val windSpeed = weatherData.value?.wind?.speed ?: "-"
     val humidity = weatherData.value?.main?.humidity ?: "-"
+
+    val coordinates = locationViewModel.locationData.collectAsState()
+
+    val latitude = coordinates.value.first
+    val longitude = coordinates.value.second
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -74,31 +81,16 @@ fun WeatherAppHomeScreen(navController: NavHostController,
             text = "${stringResource(id = R.string.humidity)}: $humidity%",
             style = MaterialTheme.typography.titleMedium
         )
-    }
-}
+        Spacer(modifier = Modifier.height(16.dp))
 
-class WeatherViewModel(application : Application) : AndroidViewModel(application) {
-    private val weatherData : WeatherData? = null
-    var currentWeatherData = MutableStateFlow(weatherData)
-
-    init {
-        fetchWeatherData()
-    }
-
-    private fun fetchWeatherData() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val data = RetrofitInstance.weatherApiService.getWeatherData()
-                withContext(Dispatchers.Main) {
-                    currentWeatherData.value = data
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                withContext(Dispatchers.Main) {
-                    currentWeatherData.value = null
-                }
-            }
-        }
+        Text(
+            text = "${stringResource(id = R.string.coordinates)}:",
+            style = MaterialTheme.typography.titleSmall,
+        )
+        Text(
+            text = "$latitude, $longitude",
+            style = MaterialTheme.typography.titleSmall,
+        )
     }
 }
 
