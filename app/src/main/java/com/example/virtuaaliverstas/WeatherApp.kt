@@ -1,31 +1,33 @@
 package com.example.virtuaaliverstas
 
-import android.app.Application
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.gson.annotations.SerializedName
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 @Composable
 fun WeatherAppHomeScreen(navController: NavHostController,
@@ -45,6 +47,8 @@ fun WeatherAppHomeScreen(navController: NavHostController,
 
     val latitude = coordinates.value.first
     val longitude = coordinates.value.second
+
+    var placeInput by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -91,12 +95,49 @@ fun WeatherAppHomeScreen(navController: NavHostController,
             text = "$latitude, $longitude",
             style = MaterialTheme.typography.titleSmall,
         )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextField(
+            value = placeInput,
+            onValueChange = { placeInput = it },
+            label = { Text(text = stringResource(id = R.string.enter_place)) }
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row {
+            Button(
+                onClick = {
+                    weatherViewModel.fetchWeatherDataByCoordinates(latitude, longitude)
+                }
+            ) {
+                Text(text = stringResource(id = R.string.use_location))
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Button(
+                onClick = {
+                    weatherViewModel.fetchWeatherDataByPlace(placeInput)
+                    placeInput = ""
+                }
+            ) {
+                Text(text = stringResource(id = R.string.use_place))
+            }
+        }
     }
 }
 
 interface WeatherApiService {
-    @GET("/data/2.5/weather?q=Tampere&APPID=c39ca0dc2b2e58cdb6689d8f4f8f2d25&units=metric")
-    suspend fun getWeatherData(): WeatherData
+    @GET("/data/2.5/weather?APPID=c39ca0dc2b2e58cdb6689d8f4f8f2d25&units=metric")
+    suspend fun getWeatherDataByPlace(
+        @Query("q") place: String
+    ): WeatherData
+
+    // Example of a request with latitude and longitude (Tampere)
+    // https://api.openweathermap.org/data/2.5/weather?lat=61.4991&lon=23.7871&APPID=c39ca0dc2b2e58cdb6689d8f4f8f2d25&units=metric
+    @GET("/data/2.5/weather?APPID=c39ca0dc2b2e58cdb6689d8f4f8f2d25&units=metric")
+    suspend fun getWeatherDataByCoordinates(
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double
+    ): WeatherData
 }
 
 object RetrofitInstance {

@@ -13,13 +13,33 @@ class WeatherViewModel(application : Application) : AndroidViewModel(application
     var currentWeatherData = MutableStateFlow(weatherData)
 
     init {
-        fetchWeatherData()
+        fetchWeatherDataByPlace()
     }
 
-    private fun fetchWeatherData() {
+    fun fetchWeatherDataByPlace(place: String = "Finland") {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val data = RetrofitInstance.weatherApiService.getWeatherData()
+                val data = RetrofitInstance
+                    .weatherApiService
+                    .getWeatherDataByPlace(place)
+                withContext(Dispatchers.Main) {
+                    currentWeatherData.value = data
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    currentWeatherData.value = null
+                }
+            }
+        }
+    }
+
+    fun fetchWeatherDataByCoordinates(latitude: Double, longitude: Double) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val data = RetrofitInstance
+                    .weatherApiService
+                    .getWeatherDataByCoordinates(latitude, longitude)
                 withContext(Dispatchers.Main) {
                     currentWeatherData.value = data
                 }

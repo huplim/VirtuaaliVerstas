@@ -12,4 +12,7 @@
     <string name="load_weather">Ladataan säätietoja…</string>
     <string name="current_weather">Tämänhetkinen sää paikassa</string>
     <string name="coordinates">Nykyinen sijainti</string>
+    <string name="use_location">Käytä sijaintia</string>
+    <string name="enter_place">Syötä paikka</string>
+    <string name="use_place">Käytä paikkaa</string>
 </resources>

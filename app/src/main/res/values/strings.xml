@@ -11,4 +11,7 @@
     <string name="load_weather">Loading weather data…</string>
     <string name="current_weather">Current weather in</string>
     <string name="coordinates">Current location</string>
+    <string name="use_location">Use location</string>
+    <string name="enter_place">Enter place</string>
+    <string name="use_place">Use place</string>
 </resources>
