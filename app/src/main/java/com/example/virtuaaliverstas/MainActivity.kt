@@ -73,6 +73,9 @@ fun MainApplication() {
                 composable("weather") {
                     WeatherAppHomeScreen(navController)
                 }
+                composable("settings") {
+                    SettingsScreen(navController)
+                }
             }
         }
     )
@@ -92,6 +95,12 @@ fun BottomNavigationBar(navController: NavHostController) {
             icon = { Text(text = "🌦️")},
             selected = navController.currentDestination?.route == "weather",
             onClick = { navController.navigate("weather") }
+        )
+        NavigationBarItem(
+            label = { Text(text = stringResource(id = R.string.settings))},
+            icon = { Text(text = "⚙️")},
+            selected = navController.currentDestination?.route == "settings",
+            onClick = { navController.navigate("settings") }
         )
     }
 }

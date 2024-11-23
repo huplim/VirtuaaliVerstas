@@ -15,4 +15,6 @@
     <string name="use_location">Käytä sijaintia</string>
     <string name="enter_place">Syötä paikka</string>
     <string name="use_place">Käytä paikkaa</string>
+    <string name="settings_title">Tässä ovat asetuksesi</string>
+    <string name="settings">Asetukset</string>
 </resources>
