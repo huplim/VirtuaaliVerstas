@@ -1,37 +1,41 @@
 package com.example.virtuaaliverstas
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.location.LocationListener
 import android.location.LocationManager
 import android.location.Location
+import android.location.LocationManager.FUSED_PROVIDER
+import android.location.LocationManager.GPS_PROVIDER
+import android.location.LocationManager.NETWORK_PROVIDER
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 
 
+@SuppressLint("InlinedApi")
 class LocationViewModel(application: Application) : AndroidViewModel(application),
     LocationListener {
     private val gpsCoordinates = Pair(0.0, 0.0)
     val locationData = MutableStateFlow(gpsCoordinates)
 
-    val locationManager = application.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private val locationManager = application.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
 
     init {
-        startListeningLocationUpdates()
-    }
-
-    fun startListeningLocationUpdates() {
         try {
-            locationManager.requestLocationUpdates(
-                // Update every 5 seconds
-                LocationManager.FUSED_PROVIDER, 5000, 0f, this
-            )
-        }
-        catch(e: SecurityException) {
+            // Get last known location from a working provider
+            val lastKnownLocation: Location? = locationManager.getLastKnownLocation(FUSED_PROVIDER)
+                ?: locationManager.getLastKnownLocation(NETWORK_PROVIDER)
+                ?: locationManager.getLastKnownLocation(GPS_PROVIDER)
+                // Update location if it exists
+                lastKnownLocation?.let {
+                locationData.value = Pair(it.latitude, it.longitude)
+            }
+        } catch (e: SecurityException) {
             e.printStackTrace()
-            locationData.value = Pair(0.0, 0.0)
         }
-
     }
 
     override fun onLocationChanged(p0: Location) {

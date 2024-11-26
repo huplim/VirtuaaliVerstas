@@ -1,6 +1,6 @@
 package com.example.virtuaaliverstas
 
-import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,14 +23,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.gson.annotations.SerializedName
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -38,7 +48,10 @@ fun WeatherAppHomeScreen(navController: NavHostController,
                          weatherViewModel: WeatherViewModel = viewModel(),
                          locationViewModel: LocationViewModel = viewModel()
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     val weatherData = weatherViewModel.currentWeatherData.collectAsState()
+    val storedPlace = weatherViewModel.storedPlace.collectAsState()
 
     val place = weatherData.value?.name ?: "-"
     val description = weatherData.value?.weather?.getOrNull(0)?.main ?: "-"
@@ -49,20 +62,34 @@ fun WeatherAppHomeScreen(navController: NavHostController,
 
     val coordinates = locationViewModel.locationData.collectAsState()
 
-    val latitude = coordinates.value.first
-    val longitude = coordinates.value.second
+    var latitude = coordinates.value.first
+    var longitude = coordinates.value.second
 
-    var placeInput by remember { mutableStateOf("") }
+    var inputPlace by remember { mutableStateOf("") }
+    var savedPlace by remember { mutableStateOf("") }
 
-    suspend fun savePlace(context: Context, place: String) {
-        context.dataStore.edit { prefs ->
-            prefs[WEATHER_KEY] = place
+    val context = LocalContext.current
+
+    // Use stored place from data store for weather info if it exists
+    LaunchedEffect(storedPlace.value) {
+        if (storedPlace.value.isNotEmpty()) {
+            weatherViewModel.fetchWeatherDataByPlace(storedPlace.value)
         }
     }
 
-    suspend fun getPlace(context: Context): String {
-        val prefs = context.dataStore.data.first()
-        return prefs[WEATHER_KEY] ?: "-"
+    LaunchedEffect(locationViewModel.locationData) {
+        latitude = coordinates.value.first
+        longitude = coordinates.value.second
+    }
+
+    fun onEnterPressed() {
+        savedPlace = inputPlace
+        inputPlace = ""
+        weatherViewModel.fetchWeatherDataByPlace(savedPlace)
+        CoroutineScope(Dispatchers.IO).launch {
+            savePlace(context, savedPlace)
+        }
+        keyboardController?.hide()
     }
 
     Column(
@@ -113,9 +140,17 @@ fun WeatherAppHomeScreen(navController: NavHostController,
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
-            value = placeInput,
-            onValueChange = { placeInput = it },
-            label = { Text(text = stringResource(id = R.string.enter_place)) }
+            value = inputPlace,
+            onValueChange = { inputPlace = it },
+            label = { Text(text = stringResource(id = R.string.enter_place)) },
+            singleLine = true,
+            // Pressing done "executes the Use Place button"
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = { onEnterPressed() }
+            )
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -130,8 +165,7 @@ fun WeatherAppHomeScreen(navController: NavHostController,
             Spacer(modifier = Modifier.width(16.dp))
             Button(
                 onClick = {
-                    weatherViewModel.fetchWeatherDataByPlace(placeInput)
-                    placeInput = ""
+                    onEnterPressed()
                 }
             ) {
                 Text(text = stringResource(id = R.string.use_place))

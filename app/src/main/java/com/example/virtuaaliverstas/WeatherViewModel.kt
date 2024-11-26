@@ -11,9 +11,18 @@ import kotlinx.coroutines.withContext
 class WeatherViewModel(application : Application) : AndroidViewModel(application) {
     private val weatherData : WeatherData? = null
     var currentWeatherData = MutableStateFlow(weatherData)
+    var storedPlace = MutableStateFlow("")
 
     init {
-        fetchWeatherDataByPlace()
+        fetchPlaceFromDataStore()
+    }
+
+    private fun fetchPlaceFromDataStore() {
+        viewModelScope.launch(Dispatchers.IO) {
+            withContext(Dispatchers.Main) {
+                storedPlace.value = getPlace(getApplication())
+            }
+        }
     }
 
     fun fetchWeatherDataByPlace(place: String = "Finland") {
