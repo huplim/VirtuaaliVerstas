@@ -1,5 +1,6 @@
 package com.example.virtuaaliverstas
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,9 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.flow.first
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -51,7 +54,16 @@ fun WeatherAppHomeScreen(navController: NavHostController,
 
     var placeInput by remember { mutableStateOf("") }
 
-    val context = LocalContext.current
+    suspend fun savePlace(context: Context, place: String) {
+        context.dataStore.edit { prefs ->
+            prefs[WEATHER_KEY] = place
+        }
+    }
+
+    suspend fun getPlace(context: Context): String {
+        val prefs = context.dataStore.data.first()
+        return prefs[WEATHER_KEY] ?: "-"
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
