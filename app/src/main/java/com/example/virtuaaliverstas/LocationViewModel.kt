@@ -9,7 +9,6 @@ import android.location.Location
 import android.location.LocationManager.FUSED_PROVIDER
 import android.location.LocationManager.GPS_PROVIDER
 import android.location.LocationManager.NETWORK_PROVIDER
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -29,8 +28,8 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
             val lastKnownLocation: Location? = locationManager.getLastKnownLocation(FUSED_PROVIDER)
                 ?: locationManager.getLastKnownLocation(NETWORK_PROVIDER)
                 ?: locationManager.getLastKnownLocation(GPS_PROVIDER)
-                // Update location if it exists
-                lastKnownLocation?.let {
+            // Update location if it exists
+            lastKnownLocation?.let {
                 locationData.value = Pair(it.latitude, it.longitude)
             }
         } catch (e: SecurityException) {
