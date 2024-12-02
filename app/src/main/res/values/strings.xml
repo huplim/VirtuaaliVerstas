@@ -22,4 +22,7 @@
     <string name="use_current_location">Use current location by default</string>
     <string name="use_location_updated">Using current location</string>
     <string name="default_place">Current default</string>
+    <string name="calculator">Calculator</string>
+    <string name="notes">Notes</string>
+    <string name="shopping_list">Shopping list</string>
 </resources>

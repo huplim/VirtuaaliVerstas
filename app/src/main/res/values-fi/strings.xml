@@ -23,4 +23,7 @@
     <string name="use_current_location">Käytä nykyistä sijaintia vakiona</string>
     <string name="use_location_updated">Käytetään nykyistä sijantia</string>
     <string name="default_place">Nykyinen</string>
+    <string name="calculator">Laskin</string>
+    <string name="notes">Muistiinpanot</string>
+    <string name="shopping_list">Ostoslista</string>
 </resources>

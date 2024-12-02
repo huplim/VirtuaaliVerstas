@@ -127,16 +127,6 @@ fun WeatherAppHomeScreen(navController: NavHostController,
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "${stringResource(id = R.string.coordinates)}:",
-            style = MaterialTheme.typography.titleSmall,
-        )
-        Text(
-            text = "$latitude, $longitude",
-            style = MaterialTheme.typography.titleSmall,
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
         TextField(
             value = inputPlace,
             onValueChange = { inputPlace = it },
