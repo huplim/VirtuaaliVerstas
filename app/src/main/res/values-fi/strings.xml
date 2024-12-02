@@ -17,7 +17,10 @@
     <string name="use_place">Käytä paikkaa</string>
     <string name="settings_title">Tässä ovat asetuksesi</string>
     <string name="settings">Asetukset</string>
-    <string name="save_location">Tallenna sijainti</string>
+    <string name="save_location">✓</string>
     <string name="save_location_info">Tähän voit tallentaa oletussijainnin</string>
     <string name="location_saved">Sijainti tallennettu</string>
+    <string name="use_current_location">Käytä nykyistä sijaintia vakiona</string>
+    <string name="use_location_updated">Käytetään nykyistä sijantia</string>
+    <string name="default_place">Nykyinen</string>
 </resources>

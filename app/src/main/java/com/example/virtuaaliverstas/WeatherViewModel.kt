@@ -12,15 +12,17 @@ class WeatherViewModel(application : Application) : AndroidViewModel(application
     private val weatherData : WeatherData? = null
     var currentWeatherData = MutableStateFlow(weatherData)
     var storedPlace = MutableStateFlow("")
+    var useCurrentLocation = MutableStateFlow(false)
 
     init {
-        fetchPlaceFromDataStore()
+        fetchSettingsFromDataStore()
     }
 
-    private fun fetchPlaceFromDataStore() {
+    private fun fetchSettingsFromDataStore() {
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
                 storedPlace.value = getPlace(getApplication())
+                useCurrentLocation.value = getUseLocation(getApplication())
             }
         }
     }

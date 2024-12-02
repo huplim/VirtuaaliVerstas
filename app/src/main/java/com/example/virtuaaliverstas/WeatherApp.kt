@@ -47,6 +47,7 @@ fun WeatherAppHomeScreen(navController: NavHostController,
 
     val weatherData = weatherViewModel.currentWeatherData.collectAsState()
     val storedPlace = weatherViewModel.storedPlace.collectAsState()
+    val useCurrentLocation = weatherViewModel.useCurrentLocation.collectAsState()
 
     val place = weatherData.value?.name ?: "-"
     val description = weatherData.value?.weather?.getOrNull(0)?.main ?: "-"
@@ -65,25 +66,27 @@ fun WeatherAppHomeScreen(navController: NavHostController,
 
     val context = LocalContext.current
 
-    // Use stored place from data store for weather info if it exists
-    LaunchedEffect(storedPlace.value) {
-        if (storedPlace.value.isNotEmpty()) {
-            weatherViewModel.fetchWeatherDataByPlace(storedPlace.value)
-        }
-    }
-
     LaunchedEffect(locationViewModel.locationData) {
         latitude = coordinates.value.first
         longitude = coordinates.value.second
+    }
+
+
+    // Use current location as default if checked in the settings
+    // Otherwise, use stored place from data store for weather info if it exists
+    LaunchedEffect(storedPlace.value, useCurrentLocation.value) {
+        if (useCurrentLocation.value) {
+            weatherViewModel.fetchWeatherDataByCoordinates(latitude, longitude)
+        }
+        else if (storedPlace.value.isNotEmpty()) {
+            weatherViewModel.fetchWeatherDataByPlace(storedPlace.value)
+        }
     }
 
     fun updateByPlace() {
         savedPlace = inputPlace
         inputPlace = ""
         weatherViewModel.fetchWeatherDataByPlace(savedPlace)
-        CoroutineScope(Dispatchers.IO).launch {
-            savePlace(context, savedPlace)
-        }
         keyboardController?.hide()
     }
 
