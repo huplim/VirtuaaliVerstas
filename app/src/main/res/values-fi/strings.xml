@@ -30,4 +30,6 @@
     <string name="qr_reader">QR-lukija</string>
     <string name="level_tool">Vatupassi</string>
     <string name="fun_corner">Hupinurkka</string>
+    <string name="connection_found">Internet yhteys löydetty</string>
+    <string name="connection_lost">Internet yhteys kadotettu</string>
 </resources>

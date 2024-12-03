@@ -1,6 +1,8 @@
 package com.example.virtuaaliverstas
 
+import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,8 +24,15 @@ import androidx.navigation.compose.rememberNavController
 import com.example.virtuaaliverstas.ui.theme.VirtuaaliVerstasTheme
 
 class MainActivity : ComponentActivity() {
+    private lateinit var connectivityReceiver: ConnectivityReceiver
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize and register the receiver
+        connectivityReceiver = ConnectivityReceiver()
+        val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(connectivityReceiver, intentFilter)
 
         // Check for location permissions, ask for them if not granted already
         if( checkSelfPermission( android.Manifest.permission.ACCESS_FINE_LOCATION )
@@ -42,6 +51,11 @@ class MainActivity : ComponentActivity() {
                 MainApplication()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(connectivityReceiver)
     }
 }
 

@@ -29,4 +29,6 @@
     <string name="qr_reader">QR-reader</string>
     <string name="level_tool">Level tool</string>
     <string name="fun_corner">Fun corner</string>
+    <string name="connection_found">Internet connection found</string>
+    <string name="connection_lost">Internet connection lost</string>
 </resources>
