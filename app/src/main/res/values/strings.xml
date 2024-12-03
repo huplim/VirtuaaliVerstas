@@ -25,4 +25,8 @@
     <string name="calculator">Calculator</string>
     <string name="notes">Notes</string>
     <string name="shopping_list">Shopping list</string>
+    <string name="coming_soon">Coming soon</string>
+    <string name="qr_reader">QR-reader</string>
+    <string name="level_tool">Level tool</string>
+    <string name="fun_corner">Fun corner</string>
 </resources>

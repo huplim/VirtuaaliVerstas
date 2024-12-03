@@ -91,12 +91,6 @@ fun BottomNavigationBar(navController: NavHostController) {
             onClick = { navController.navigate("home") }
         )
         NavigationBarItem(
-            label = { Text(text = stringResource(id = R.string.weather))},
-            icon = { Text(text = "🌦️")},
-            selected = navController.currentDestination?.route == "weather",
-            onClick = { navController.navigate("weather") }
-        )
-        NavigationBarItem(
             label = { Text(text = stringResource(id = R.string.settings))},
             icon = { Text(text = "⚙️")},
             selected = navController.currentDestination?.route == "settings",

@@ -24,6 +24,10 @@
     <string name="use_location_updated">Käytetään nykyistä sijantia</string>
     <string name="default_place">Nykyinen</string>
     <string name="calculator">Laskin</string>
-    <string name="notes">Muistiinpanot</string>
+    <string name="notes">Muistio</string>
     <string name="shopping_list">Ostoslista</string>
+    <string name="coming_soon">Tulossa pian</string>
+    <string name="qr_reader">QR-lukija</string>
+    <string name="level_tool">Vatupassi</string>
+    <string name="fun_corner">Hupinurkka</string>
 </resources>
