@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -28,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
@@ -40,6 +42,8 @@ fun SettingsScreen(navController: NavHostController) {
     var inputLocation by remember { mutableStateOf("") }
     var savedLocation by remember { mutableStateOf("") }
     var useCurrentLocation by remember { mutableStateOf(false) }
+    var inputApiKey by remember { mutableStateOf("") }
+    var savedApiKey by remember { mutableStateOf("") }
 
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -70,11 +74,22 @@ fun SettingsScreen(navController: NavHostController) {
         }
     }
 
+    fun storeApiKey() {
+        savedApiKey = inputApiKey
+        inputApiKey = ""
+        CoroutineScope(Dispatchers.IO).launch {
+            saveApiKey(context, savedApiKey)
+        }
+        keyboardController?.hide()
+        Toast.makeText(context, context.getString(R.string.api_key_saved), Toast.LENGTH_SHORT).show()
+    }
+
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        // Save location section
         Text(
             text = stringResource(id = R.string.save_location_info),
             style = MaterialTheme.typography.titleSmall,
@@ -87,7 +102,11 @@ fun SettingsScreen(navController: NavHostController) {
             TextField(
                 value = inputLocation,
                 onValueChange = { inputLocation = it },
-                label = { Text(text = "${stringResource(id = R.string.default_place)}: $savedLocation")},
+                label = {
+                    Text(
+                        text = "${stringResource(id = R.string.default_place)}: $savedLocation",
+                        style = MaterialTheme.typography.titleSmall
+                    )},
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
@@ -96,20 +115,25 @@ fun SettingsScreen(navController: NavHostController) {
                     onDone = {
                         storeLocation()
                     }
-                )
+                ),
+                modifier = Modifier.weight(11f)
             )
             Spacer(modifier = Modifier.width(16.dp))
 
             Button(
                 onClick = {
                     storeLocation()
-                }
+                },
+                modifier = Modifier.weight(2f)
             ) {
-                Text(text = stringResource(id = R.string.save_location))
+                Text(
+                    text = stringResource(id = R.string.save_location),
+                    textAlign = TextAlign.Center
+                )
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
 
+        // Use current location section
         Row (
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
@@ -126,6 +150,50 @@ fun SettingsScreen(navController: NavHostController) {
                 onCheckedChange = { updateUseLocation() }
             )
         }
+        Spacer(modifier = Modifier.height(16.dp))
 
+        // Insert API key section
+        Text(
+            text = stringResource(id = R.string.insert_api_key),
+            style = MaterialTheme.typography.titleSmall,
+        )
+        Row (
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            TextField(
+                value = inputApiKey,
+                onValueChange = { inputApiKey = it },
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.secret_api_key),
+                        style = MaterialTheme.typography.titleSmall
+                    )},
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        storeApiKey()
+                    }
+                ),
+                modifier = Modifier.weight(11f)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Button(
+                onClick = {
+                    storeApiKey()
+                },
+                modifier = Modifier.weight(2f)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.save_location),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
     }
 }

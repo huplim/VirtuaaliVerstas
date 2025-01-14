@@ -30,9 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.gson.annotations.SerializedName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -45,6 +42,7 @@ fun WeatherAppHomeScreen(navController: NavHostController,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    val apiKey = weatherViewModel.storedApiKey.collectAsState()
     val weatherData = weatherViewModel.currentWeatherData.collectAsState()
     val storedPlace = weatherViewModel.storedPlace.collectAsState()
     val useCurrentLocation = weatherViewModel.useCurrentLocation.collectAsState()
@@ -71,22 +69,21 @@ fun WeatherAppHomeScreen(navController: NavHostController,
         longitude = coordinates.value.second
     }
 
-
     // Use current location as default if checked in the settings
     // Otherwise, use stored place from data store for weather info if it exists
     LaunchedEffect(storedPlace.value, useCurrentLocation.value) {
         if (useCurrentLocation.value) {
-            weatherViewModel.fetchWeatherDataByCoordinates(latitude, longitude)
+            weatherViewModel.fetchWeatherDataByCoordinates(apiKey.value, latitude, longitude)
         }
         else if (storedPlace.value.isNotEmpty()) {
-            weatherViewModel.fetchWeatherDataByPlace(storedPlace.value)
+            weatherViewModel.fetchWeatherDataByPlace(apiKey.value, storedPlace.value)
         }
     }
 
     fun updateByPlace() {
         savedPlace = inputPlace
         inputPlace = ""
-        weatherViewModel.fetchWeatherDataByPlace(savedPlace)
+        weatherViewModel.fetchWeatherDataByPlace(apiKey.value, savedPlace)
         keyboardController?.hide()
     }
 
@@ -145,7 +142,7 @@ fun WeatherAppHomeScreen(navController: NavHostController,
         Row {
             Button(
                 onClick = {
-                    weatherViewModel.fetchWeatherDataByCoordinates(latitude, longitude)
+                    weatherViewModel.fetchWeatherDataByCoordinates(apiKey.value, latitude, longitude)
                 }
             ) {
                 Text(text = stringResource(id = R.string.use_location))
@@ -163,15 +160,17 @@ fun WeatherAppHomeScreen(navController: NavHostController,
 }
 
 interface WeatherApiService {
-    @GET("/data/2.5/weather?APPID=c39ca0dc2b2e58cdb6689d8f4f8f2d25&units=metric")
+    @GET("/data/2.5/weather?units=metric")
     suspend fun getWeatherDataByPlace(
+        @Query("APPID") apiKey: String,
         @Query("q") place: String
     ): WeatherData
 
     // Example of a request with latitude and longitude (Tampere)
-    // https://api.openweathermap.org/data/2.5/weather?lat=61.4991&lon=23.7871&APPID=c39ca0dc2b2e58cdb6689d8f4f8f2d25&units=metric
-    @GET("/data/2.5/weather?APPID=c39ca0dc2b2e58cdb6689d8f4f8f2d25&units=metric")
+    // https://api.openweathermap.org/data/2.5/weather?lat=61.4991&lon=23.7871&APPID=[INSERT API KEY HERE]&units=metric
+    @GET("/data/2.5/weather?units=metric")
     suspend fun getWeatherDataByCoordinates(
+        @Query("APPID") apiKey: String,
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double
     ): WeatherData

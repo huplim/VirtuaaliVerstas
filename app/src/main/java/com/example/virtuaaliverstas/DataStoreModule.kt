@@ -12,6 +12,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "us
 
 val WEATHER_KEY = stringPreferencesKey("weather_place")
 val LOCATION_KEY = stringPreferencesKey("location_use")
+val API_KEY = stringPreferencesKey("api_key")
 
 suspend fun savePlace(context: Context, place: String) {
     context.dataStore.edit { prefs ->
@@ -33,4 +34,15 @@ suspend fun updateUseLocation(context: Context, useLocation: Boolean) {
 suspend fun getUseLocation(context: Context): Boolean {
     val prefs = context.dataStore.data.first()
     return prefs[LOCATION_KEY]?.toBoolean() ?: false
+}
+
+suspend fun saveApiKey(context: Context, apiKey: String) {
+    context.dataStore.edit { prefs ->
+        prefs[API_KEY] = apiKey
+    }
+}
+
+suspend fun getApiKey(context: Context): String {
+    val prefs = context.dataStore.data.first()
+    return prefs[API_KEY] ?: "-"
 }

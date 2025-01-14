@@ -31,4 +31,7 @@
     <string name="fun_corner">Fun corner</string>
     <string name="connection_found">Internet connection found</string>
     <string name="connection_lost">Internet connection lost</string>
+    <string name="insert_api_key">Here you can insert an API key for fetching weather data from OpenWeather</string>
+    <string name="api_key_saved">API key saved</string>
+    <string name="secret_api_key">Your API key should be a secret</string>
 </resources>

@@ -13,6 +13,7 @@ class WeatherViewModel(application : Application) : AndroidViewModel(application
     var currentWeatherData = MutableStateFlow(weatherData)
     var storedPlace = MutableStateFlow("")
     var useCurrentLocation = MutableStateFlow(false)
+    var storedApiKey = MutableStateFlow("")
 
     init {
         fetchSettingsFromDataStore()
@@ -21,18 +22,19 @@ class WeatherViewModel(application : Application) : AndroidViewModel(application
     private fun fetchSettingsFromDataStore() {
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
+                storedApiKey.value = getApiKey(getApplication())
                 storedPlace.value = getPlace(getApplication())
                 useCurrentLocation.value = getUseLocation(getApplication())
             }
         }
     }
 
-    fun fetchWeatherDataByPlace(place: String = "Finland") {
+    fun fetchWeatherDataByPlace(apiKey: String, place: String = "Finland") {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val data = RetrofitInstance
                     .weatherApiService
-                    .getWeatherDataByPlace(place)
+                    .getWeatherDataByPlace(apiKey, place)
                 withContext(Dispatchers.Main) {
                     currentWeatherData.value = data
                 }
@@ -45,12 +47,12 @@ class WeatherViewModel(application : Application) : AndroidViewModel(application
         }
     }
 
-    fun fetchWeatherDataByCoordinates(latitude: Double, longitude: Double) {
+    fun fetchWeatherDataByCoordinates(apiKey: String, latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val data = RetrofitInstance
                     .weatherApiService
-                    .getWeatherDataByCoordinates(latitude, longitude)
+                    .getWeatherDataByCoordinates(apiKey, latitude, longitude)
                 withContext(Dispatchers.Main) {
                     currentWeatherData.value = data
                 }
