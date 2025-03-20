@@ -13,3 +13,10 @@ You can expect the following applications in the future:
  - All sorts of fun stuff
 
 Please be patient, the focus of this project is learning after all.
+
+
+So far the following have been implemented:
+
+Weather Application
+ - This requires the user to insert an API key from OpenWeather
+ - Read more at https://openweathermap.org/api
