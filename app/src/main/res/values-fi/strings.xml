@@ -32,7 +32,9 @@
     <string name="fun_corner">Hupinurkka</string>
     <string name="connection_found">Internet yhteys löydetty</string>
     <string name="connection_lost">Internet yhteys kadotettu</string>
-    <string name="insert_api_key">Tähän voit syöttää API avaimesi säätietojen hakemista varten OpenWeather:ista</string>
+    <string name="insert_api_key">Syötä API avaimesi OpenWeather:ista</string>
     <string name="api_key_saved">API avain tallennettu</string>
     <string name="secret_api_key">API avaimesi tulisi olla salaisuus</string>
+    <string name="checked">✓</string>
+    <string name="unchecked">" "</string>
 </resources>

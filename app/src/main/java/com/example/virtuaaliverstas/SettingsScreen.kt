@@ -1,6 +1,7 @@
 package com.example.virtuaaliverstas
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,8 +14,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -85,21 +89,69 @@ fun SettingsScreen(navController: NavHostController) {
     }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.
+            fillMaxSize().
+            padding(24.dp),
         verticalArrangement = Arrangement.Center
     ) {
+        // Use current location section
+        Row (
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = stringResource(id = R.string.use_current_location),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp),
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+
+            OutlinedButton(
+                onClick = { updateUseLocation() },
+                modifier = Modifier.weight(0.2f),
+                shape = MaterialTheme.shapes.small,
+                colors = if (useCurrentLocation) {
+                    ButtonDefaults.outlinedButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        contentColor = MaterialTheme.colorScheme.onBackground
+                    )
+                },
+                border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+            ) {
+                Text(
+                    text = if (useCurrentLocation) stringResource(id = R.string.checked) else stringResource(id = R.string.unchecked),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
         // Save location section
         Text(
             text = stringResource(id = R.string.save_location_info),
             style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, bottom = 0.dp)
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(16.dp)
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
         ) {
-            TextField(
+            OutlinedTextField(
                 value = inputLocation,
                 onValueChange = { inputLocation = it },
                 label = {
@@ -109,14 +161,17 @@ fun SettingsScreen(navController: NavHostController) {
                     )},
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Done
+                    imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
                         storeLocation()
                     }
                 ),
-                modifier = Modifier.weight(11f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp),
+                shape = MaterialTheme.shapes.small
             )
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -124,7 +179,10 @@ fun SettingsScreen(navController: NavHostController) {
                 onClick = {
                     storeLocation()
                 },
-                modifier = Modifier.weight(2f)
+                modifier = Modifier
+                    .weight(0.2f)
+                    .align(Alignment.CenterVertically),
+                shape = MaterialTheme.shapes.small
             ) {
                 Text(
                     text = stringResource(id = R.string.save_location),
@@ -132,37 +190,24 @@ fun SettingsScreen(navController: NavHostController) {
                 )
             }
         }
-
-        // Use current location section
-        Row (
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.use_current_location),
-                style = MaterialTheme.typography.titleSmall,
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Checkbox(
-                checked = useCurrentLocation,
-                onCheckedChange = { updateUseLocation() }
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         // Insert API key section
         Text(
             text = stringResource(id = R.string.insert_api_key),
             style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, bottom = 0.dp)
         )
         Row (
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(16.dp)
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
         ) {
-            TextField(
+            OutlinedTextField(
                 value = inputApiKey,
                 onValueChange = { inputApiKey = it },
                 label = {
@@ -179,7 +224,10 @@ fun SettingsScreen(navController: NavHostController) {
                         storeApiKey()
                     }
                 ),
-                modifier = Modifier.weight(11f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp),
+                shape = MaterialTheme.shapes.small
             )
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -187,7 +235,10 @@ fun SettingsScreen(navController: NavHostController) {
                 onClick = {
                     storeApiKey()
                 },
-                modifier = Modifier.weight(2f)
+                modifier = Modifier
+                    .weight(0.2f)
+                    .align(Alignment.CenterVertically),
+                shape = MaterialTheme.shapes.small
             ) {
                 Text(
                     text = stringResource(id = R.string.save_location),
