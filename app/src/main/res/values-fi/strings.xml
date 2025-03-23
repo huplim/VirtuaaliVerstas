@@ -17,7 +17,6 @@
     <string name="use_place">Käytä paikkaa</string>
     <string name="settings_title">Tässä ovat asetuksesi</string>
     <string name="settings">Asetukset</string>
-    <string name="save_location">✓</string>
     <string name="save_location_info">Tähän voit tallentaa oletussijainnin</string>
     <string name="location_saved">Sijainti tallennettu</string>
     <string name="use_current_location">Käytä nykyistä sijaintia vakiona</string>
@@ -37,4 +36,13 @@
     <string name="secret_api_key">API avaimesi tulisi olla salaisuus</string>
     <string name="checked">✓</string>
     <string name="unchecked">" "</string>
+    <string name="camera_permissions_denied">Kameran käyttöoikeuksia ei myönnetty</string>
+    <string name="click_qr_code">Paina QR-koodia, kun sitä ympäröi punainen neliö</string>
+    <string name="confirm_open_link">Haluatko avata tämän linkin?</string>
+    <string name="open">Avaa</string>
+    <string name="cancel">Peruuta</string>
+    <string name="open_link">Avaa linkki?</string>
+    <string name="empty_api_key">API avain ei voi olla tyhjä</string>
+    <string name="empty_input_location">Paikan nimi ei voi olla tyhjä</string>
+    <string name="no_saved_api_key">API avainta ei ole tallennettu</string>
 </resources>

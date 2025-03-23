@@ -15,6 +15,10 @@ fun getNavigationItems(context: Context): List<NavigationItem> {
             route = "weather",
             description = ""),
         NavigationItem(
+            label = context.getString(R.string.qr_reader),
+            route = "qr_reader",
+            description = ""),
+        NavigationItem(
             label = context.getString(R.string.calculator),
             route = "home",
             description = context.getString(R.string.coming_soon)),
@@ -26,10 +30,6 @@ fun getNavigationItems(context: Context): List<NavigationItem> {
             label = context.getString(R.string.shopping_list),
             route = "home",
             description = context.getString(R.string.coming_soon)),
-        NavigationItem(
-            label = context.getString(R.string.qr_reader),
-            route = "qr_reader",
-            description = ""),
         NavigationItem(
             label = context.getString(R.string.level_tool),
             route = "home",
