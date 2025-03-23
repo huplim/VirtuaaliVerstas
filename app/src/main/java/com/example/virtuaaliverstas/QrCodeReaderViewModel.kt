@@ -8,8 +8,8 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import androidx.core.net.toUri
 
 class QrCodeReaderViewModel(barcode: Barcode) {
-    var boundingRect: Rect = barcode.boundingBox!!
-    private var qrContent: String = ""
+    var boundingRect: Rect? = barcode.boundingBox!!
+    var qrContent: String
     var qrCodeTouchCallback: (View, MotionEvent) -> Boolean = { _, _ -> false }
 
     init {
@@ -19,9 +19,13 @@ class QrCodeReaderViewModel(barcode: Barcode) {
             qrCodeTouchCallback = { view, event ->
                 // Open URL if the touch event is on the bounding box
                 if (event.action == MotionEvent.ACTION_DOWN
-                    && boundingRect.contains(event.x.toInt(), event.y.toInt())) {
+                    && boundingRect?.contains(
+                        event.x.toInt(), event.y.toInt()) == true
+                    ) {
 
-                    val openBrowserIntent = Intent(Intent.ACTION_VIEW)
+                    val openBrowserIntent = Intent(Intent.ACTION_VIEW).apply {
+                        data = qrContent.toUri()
+                    }
                     openBrowserIntent.data = qrContent.toUri()
                     view.context.startActivity(openBrowserIntent)
                 }
@@ -33,4 +37,6 @@ class QrCodeReaderViewModel(barcode: Barcode) {
             qrCodeTouchCallback = { _, _ -> false }
         }
     }
+
+    companion object
 }

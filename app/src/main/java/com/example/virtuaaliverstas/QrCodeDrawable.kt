@@ -14,7 +14,7 @@ class QrCodeDrawable(private val qrCodeViewModel: QrCodeReaderViewModel) : Drawa
     }
 
     override fun draw(canvas: Canvas) {
-        val boundingBox: Rect = qrCodeViewModel.boundingRect
+        val boundingBox: Rect = qrCodeViewModel.boundingRect ?: Rect()
         canvas.drawRect(boundingBox, paint)
     }
 
