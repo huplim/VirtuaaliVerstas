@@ -53,10 +53,15 @@ fun SettingsScreen(navController: NavHostController) {
         CoroutineScope(Dispatchers.IO).launch {
             savedLocation = getPlace(context)
             useCurrentLocation = getUseLocation(context)
+            savedApiKey = getApiKey(context)
         }
     }
 
     fun storeLocation() {
+        if (inputLocation.isEmpty()) {
+            Toast.makeText(context, context.getString(R.string.empty_input_location), Toast.LENGTH_SHORT).show()
+            return
+        }
         savedLocation = inputLocation
         inputLocation = ""
         CoroutineScope(Dispatchers.IO).launch {
@@ -77,6 +82,10 @@ fun SettingsScreen(navController: NavHostController) {
     }
 
     fun storeApiKey() {
+        if (inputApiKey.isEmpty()) {
+            Toast.makeText(context, context.getString(R.string.empty_api_key), Toast.LENGTH_SHORT).show()
+            return
+        }
         savedApiKey = inputApiKey
         inputApiKey = ""
         CoroutineScope(Dispatchers.IO).launch {
@@ -127,7 +136,8 @@ fun SettingsScreen(navController: NavHostController) {
                 border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
             ) {
                 Text(
-                    text = if (useCurrentLocation) stringResource(id = R.string.checked) else stringResource(id = R.string.unchecked),
+                    text = if (useCurrentLocation) stringResource(id = R.string.checked)
+                        else stringResource(id = R.string.unchecked),
                     textAlign = TextAlign.Center
                 )
             }
@@ -183,7 +193,7 @@ fun SettingsScreen(navController: NavHostController) {
                 shape = MaterialTheme.shapes.small
             ) {
                 Text(
-                    text = stringResource(id = R.string.save_location),
+                    text = stringResource(id = R.string.checked),
                     textAlign = TextAlign.Center
                 )
             }
@@ -198,6 +208,13 @@ fun SettingsScreen(navController: NavHostController) {
                 .fillMaxWidth()
                 .padding(start = 16.dp, bottom = 0.dp)
         )
+        // API key text based on if it's found
+        val apiDisplayText = if (savedApiKey.isNotEmpty()) {
+            stringResource(id = R.string.api_key_saved)
+        } else {
+            stringResource(id = R.string.no_saved_api_key)
+        }
+
         Row (
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
@@ -210,7 +227,7 @@ fun SettingsScreen(navController: NavHostController) {
                 onValueChange = { inputApiKey = it },
                 label = {
                     Text(
-                        text = stringResource(id = R.string.secret_api_key),
+                        text = apiDisplayText,
                         style = MaterialTheme.typography.titleSmall
                     )},
                 singleLine = true,
@@ -239,7 +256,7 @@ fun SettingsScreen(navController: NavHostController) {
                 shape = MaterialTheme.shapes.small
             ) {
                 Text(
-                    text = stringResource(id = R.string.save_location),
+                    text = stringResource(id = R.string.checked),
                     textAlign = TextAlign.Center
                 )
             }

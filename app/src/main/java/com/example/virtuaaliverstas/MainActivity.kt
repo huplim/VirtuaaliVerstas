@@ -1,11 +1,9 @@
 package com.example.virtuaaliverstas
 
-import android.Manifest.permission.CAMERA
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -23,17 +21,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.virtuaaliverstas.qrreader.QrCodeReaderScreen
 import com.example.virtuaaliverstas.ui.theme.VirtuaaliVerstasTheme
+import com.example.virtuaaliverstas.weatherapp.WeatherAppHomeScreen
 
 class MainActivity : AppCompatActivity() {
     private lateinit var connectivityReceiver: ConnectivityReceiver
-    private val CAMERA_PERMISSION_REQUEST_CODE = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,11 +49,6 @@ class MainActivity : AppCompatActivity() {
                 android.Manifest.permission.ACCESS_FINE_LOCATION ), 0 )
             requestPermissions( arrayOf(
                 android.Manifest.permission.ACCESS_COARSE_LOCATION ), 0 )
-        }
-
-        // Request camera permission if not granted
-        if (ContextCompat.checkSelfPermission(this, CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(CAMERA), CAMERA_PERMISSION_REQUEST_CODE)
         }
 
         enableEdgeToEdge()

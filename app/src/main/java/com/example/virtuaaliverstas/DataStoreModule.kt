@@ -44,5 +44,5 @@ suspend fun saveApiKey(context: Context, apiKey: String) {
 
 suspend fun getApiKey(context: Context): String {
     val prefs = context.dataStore.data.first()
-    return prefs[API_KEY] ?: "-"
+    return prefs[API_KEY] ?: ""
 }
