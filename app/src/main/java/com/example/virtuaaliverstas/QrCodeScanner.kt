@@ -17,6 +17,7 @@ import com.google.mlkit.vision.barcode.common.Barcode
 class QrCodeScanner(
     private val context: Context,
     private val previewView: PreviewView,
+    private val onQrCodeDetected: (String) -> Unit
 ) {
     private lateinit var barcodeScanner: BarcodeScanner
 
@@ -55,7 +56,17 @@ class QrCodeScanner(
                 val qrCodeViewModel = QrCodeReaderViewModel(barcodeResults[0])
                 val qrCodeDrawable = QrCodeDrawable(qrCodeViewModel)
 
-                previewView.setOnTouchListener(qrCodeViewModel.qrCodeTouchCallback)
+                previewView.setOnTouchListener { view, event ->
+                    if (event.action == MotionEvent.ACTION_DOWN
+                        && qrCodeViewModel.boundingRect?.contains(event.x.toInt(), event.y.toInt()) == true
+                    ) {
+                        onQrCodeDetected(qrCodeViewModel.qrContent)
+                    }
+                    if (event.action == MotionEvent.ACTION_UP) {
+                        view.performClick()
+                    }
+                    true
+                }
                 previewView.overlay.clear()
                 previewView.overlay.add(qrCodeDrawable)
             }
