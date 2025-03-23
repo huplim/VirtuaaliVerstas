@@ -20,3 +20,5 @@ So far the following have been implemented:
 Weather Application
  - This requires the user to insert an API key from OpenWeather
  - Read more at https://openweathermap.org/api
+
+QR-code Reader
